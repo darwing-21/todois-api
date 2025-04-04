@@ -5,6 +5,7 @@ module.exports = (sequelize) => {
     static associate(models) {
       Todo.belongsTo(models.User, {
         foreignKey: "user_id",
+        as: "user",
       });
     }
   }
@@ -30,7 +31,7 @@ module.exports = (sequelize) => {
       description: {
         type: DataTypes.TEXT,
       },
-      
+
       completed: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
