@@ -1,4 +1,4 @@
-const { Todo } = require("../database/models");
+const { Todo, User } = require("../database/models");
 
 class TodoController {
   async create(req, res) {
@@ -20,15 +20,33 @@ class TodoController {
     try {
       let todos;
 
+      const includeUser = {
+        model: User,
+        as: "user",
+        attributes: ["id", "name", "last_name"],
+      };
+
       if (req.user.role === "admin") {
-        todos = await Todo.findAll();
+        todos = await Todo.findAll({ include: [includeUser] });
       } else {
         todos = await Todo.findAll({
           where: { user_id: req.user.id },
+          include: [includeUser],
         });
       }
 
-      return res.json(todos);
+      const response = todos.map((todo) => ({
+        id: todo.id,
+        title: todo.title,
+        description: todo.description,
+        completed: todo.completed,
+        user_id: todo.user.id,
+        user: `${todo.user.name} ${todo.user.last_name}`,
+        createdAt: todo.createdAt,
+        updatedAt: todo.updatedAt,
+      }));
+
+      return res.json(response);
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
