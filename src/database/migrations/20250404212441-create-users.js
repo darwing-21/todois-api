@@ -32,6 +32,11 @@ module.exports = {
         unique: true,
       },
       
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      
       role: {
         type: Sequelize.ENUM("admin", "mortal"),
         allowNull: false,
